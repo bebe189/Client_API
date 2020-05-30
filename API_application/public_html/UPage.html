@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>User page</title>
+        <script>
+            function findUSerALL() {
+                xhr = new XMLHttpRequest();
+                var url = 'http://localhost:8080/users';
+                xhr.onreadystatechange = function (json) {
+                    if (this.readyState === 4 && this.status === 200) {
+                        decode_json_user(this.responseText);
+                        document.getElementById("messages").innerHTML = "Operazione eseguita.";
+                    }
+                }
+                xhr.open("GET", url, true);
+                xhr.send();
+            }
+            function decode_json_user(data) {
+                var r = "";
+                var parsedJson = JSON.parse(data);
+                for (var i = 0; i < parsedJson.response.length; i++) {
+                    r += (parsedJson.response[i].username + " " + parsedJson.response[i].password +
+                            " <button onClick='deleteUser(" + parsedJson.response[i].id) +
+                            ");'>cancella</button> <br>";
+                }
+                document.getElementById("User").innerHTML = r;
+            }
+            function deleteUser(id) {
+                xhr = new XMLHttpRequest();
+                var url = "http://localhost:8080/users/" + id;
+                xhr.open("DELETE", url, true);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        switch (xhr.status) {
+                            case 204:
+                                
+                                findUSerALL(); 
+                                break;
+                            case 404:
+                                document.getElementById("messages").innerHTML = "Errore 404";
+                                break;
+                            default:
+                                document.getElementById("messages").innerHTML = "Non eseguito.";
+                        }
+                    }
+                };
+                xhr.send();
+            }
+            function insertUser() {
+                xhr = new XMLHttpRequest();
+                var url = 'http://localhost:8080/users';
+                xhr.open('POST', url, true);
+                xhr.setRequestHeader("Content-type", "application/json");
+                xhr.withCredentials = false;
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        switch (xhr.status) {
+                            case 201:
+                                document.getElementById(username).value = "";
+                                document.getElementById(password).value = "";
+                                findUSerALL();
+                                break;
+                            case 404:
+                                document.getElementById("messages").innerHTML = "404";
+                                break;
+                            default:
+                                document.getElementById("messages").innerHTML = "non eseguito";
+                        }
+
+                    }
+                };
+
+                var data = JSON.stringify({"username": document.getElementById("username").value,
+                    "password": document.getElementById("password").value
+                });
+                xhr.send(data);
+
+            }
+
+        </script>
+    </head>
+    <body onLoad = "findUSerALL();">
+        <a href="index.html"> User </a><br>
+        <button onClick="findUSerALL();">Carica Utenti</button>
+        <p id="messages"></p> <br>
+        <label for="username">username:</label> <input type="text" name="username" id="username"></br>
+        <label for="password">password</label> <input type="text" name="password" id="password"></br>
+        <button onClick="insertUser();">Inserisci</button>
+        <div id="User" ></div><br>
+        <a href="Post.html"> Post </a><br>
+    </body>
+</html>

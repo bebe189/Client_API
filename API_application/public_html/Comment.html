@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Comment</title>
+        <script>
+            function findCOmmentALL() {
+                xhr = new XMLHttpRequest();
+                var url = 'http://localhost:8080/comments';
+                xhr.onreadystatechange = function (json) {
+                    if (this.readyState === 4 && this.status === 200) {
+                        decode_json_comment(this.responseText);
+                        document.getElementById("messages").innerHTML = "Done it.";
+                    }
+                }
+                xhr.open("GET", url, true);
+                xhr.send();
+            }
+            function decode_json_comment(data) {
+                var r = "";
+                var parsedJson = JSON.parse(data);
+                for (var i = 0; i < parsedJson.response.length; i++) {
+                    r += (parsedJson.response[i].testo + " " +  parsedJson.response[i].dataOra +
+                            " <button onClick='deleteComment(" + parsedJson.response[i].id) +
+                            ");'>cancella</button> <br>";
+                }
+                document.getElementById("Comment").innerHTML = r;
+            }
+            function deleteComment(id) {
+                xhr = new XMLHttpRequest();
+                var url = "http://localhost:8080/comments/" + id;
+                xhr.open("DELETE", url, true);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        switch (xhr.status) {
+                            case 204:
+                                
+                                findCOmmentALL(); 
+                                break;
+                            case 404:
+                                document.getElementById("messages").innerHTML = "Errore 404";
+                                break;
+                            default:
+                                document.getElementById("messages").innerHTML = "Non eseguito.";
+                        }
+                    }
+                };
+                xhr.send();
+            }
+            function setCookie(cname, cvalue, exdays) {
+                var d = new Date();
+                d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+                var expires = "expires=" + d.toUTCString();
+                document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+            }
+
+            function getCookie(cname) {
+                var name = cname + "=";
+                var decodedCookie = decodeURIComponent(document.cookie);
+                var ca = decodedCookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            }
+            function insertComment() {
+                xhr = new XMLHttpRequest();
+                var url = 'http://localhost:8080/comments';
+                var author = {"id": Number(getCookie("userId"))};
+                var post = {"id": Number(getCookie("postId"))};
+                xhr.open('POST', url, true);
+                xhr.setRequestHeader("Content-type", "application/json");
+                xhr.withCredentials = false;
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        switch (xhr.status) {
+                            case 201:
+                                document.getElementById(author).value = "";
+                                document.getElementById(testo).value = "";
+                                document.getElementById(post).value = "";
+                                document.getElementById(dataOra).value = "";
+                                findCOmmentALL();
+
+                                break;
+                            case 404:
+                                document.getElementById("messages").innerHTML = "404";
+                                break;
+                            default:
+                                document.getElementById("messages").innerHTML = "non eseguito";
+                        }
+
+                    }
+                };
+
+                var data = JSON.stringify({"author": Number(document.getElementById("author")).value,
+                    "testo": document.getElementById("testo").value,
+                    "post": Number(document.getElementById("post")).value,
+                    "dataOra": document.getElementById("dataOra").value
+                });
+                xhr.send(data);
+
+            }
+        </script>
+    </head>
+    <body onload="findCOmmentALL()">
+        <a href="index.html"> index </a><br>
+        <button onClick="findCOmmentALL()">Carica commento</button>
+        <p id="messages"></p> <br>
+        <label for="author">author:</label> <input type="number" name="author" id="author"></br>
+        <label for="testo">testo:</label> <input type="text" name="testo" id="testo"></br>
+        <label for="post">post:</label> <input type="number" name="post" id="post"></br>
+        <label for="dataOra">dataOra</label> <input type="text" name="dataOra" id="dataOra"></br>
+        <button onClick="insertComment()">InserisciCommento</button>
+        <div id="Comment"></div>
+    </body>
+</html>

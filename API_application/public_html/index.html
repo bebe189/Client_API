@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>API_Microblog</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script>
+            function showUserList(address) {
+                document.getElementById("risultato-raw").innerHTML = "";
+                document.getElementById("risultato").innerHTML = "Starting..";
+
+                if (window.XMLHttpRequest)
+                {
+                    xmlhttp = new XMLHttpRequest();
+                } else
+                {
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+
+                xmlhttp.onreadystatechange = function ()
+                {
+                    if (this.readyState === 4 && this.status === 200)
+                    {
+                        visualJson(this.responseText);
+                    } else
+                        document.getElementById("risultato").innerHTML = "doing..";
+                }
+                xmlhttp.open("GET", address, true);
+                xmlhttp.send();
+            }
+            function visualJson(json) {
+                document.getElementById("risultato-raw").innerHTML = json;
+                var parsedJson = JSON.parse(json);
+                var output = '<div> codice http di risposta: ' + parsedJson.server;
+                var table = '<table><tr><th>Id</th><th>username</th><th>password</th></tr>';
+                for (i = 0; i < parsedJson.response.Length; i++) {
+                    table = +"<tr><td>" +
+                            parsedJson.response[i].id + "</td><td>" +
+                            parsedJson.response[i].username + "</td><td>" +
+                            parsedJson.response[i].password + "</td><td>";
+                }
+                table = "</table>";
+                document.getElementById("risultato").innerHTML = output + table;
+            }
+            function showPostList(address) {
+                document.getElementById("risultato-raw").innerHTML = "";
+                document.getElementById("risultato").innerHTML = "Starting..";
+
+                if (window.XMLHttpRequest)
+                {
+                    xmlhttp = new XMLHttpRequest();
+                } else
+                {
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+
+                xmlhttp.onreadystatechange = function ()
+                {
+                    if (this.readyState === 4 && this.status === 200)
+                    {
+                        visualJson(this.responseText);
+                    } else
+                        document.getElementById("risultato").innerHTML = "doing..";
+                }
+                xmlhttp.open("GET", address, true);
+                xmlhttp.send();
+            }
+            function visualJson(json) {
+                document.getElementById("risultato-raw").innerHTML = json;
+                var parsedJson = JSON.parse(json);
+                var output = '<div> codice http di risposta: ' + parsedJson.server;
+                var table = '<table><tr><th>Id</th><th>autore</th><th>titolo</th><th>testo</th><th>dataOra</th></tr>';
+                for (i = 0; i < parsedJson.response.Length; i++) {
+                    table = +"<tr><td>" +
+                            parsedJson.response[i].id + "</td><td>" +
+                            parsedJson.response[i].autore + "</td><td>" +
+                            parsedJson.response[i].titolo + "</td><td>" +
+                            parsedJson.response[i].testo + "</td><td>" +
+                            parsedJson.response[i].dataOra + "</td><td>";
+                }
+                table = "</table>";
+                document.getElementById("risultato").innerHTML = output + table;
+            }
+            function showCommentList(address) {
+                document.getElementById("risultato-raw").innerHTML = "";
+                document.getElementById("risultato").innerHTML = "Starting..";
+
+                if (window.XMLHttpRequest)
+                {
+                    xmlhttp = new XMLHttpRequest();
+                } else
+                {
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+
+                xmlhttp.onreadystatechange = function ()
+                {
+                    if (this.readyState === 4 && this.status === 200)
+                    {
+                        visualJson(this.responseText);
+                    } else
+                        document.getElementById("risultato").innerHTML = "doing..";
+                }
+                xmlhttp.open("GET", address, true);
+                xmlhttp.send();
+            }
+            function visualJson(json) {
+                document.getElementById("risultato-raw").innerHTML = json;
+                var parsedJson = JSON.parse(json);
+                var output = '<div> codice http di risposta: ' + parsedJson.server;
+                var table = '<table><tr><th>Id</th><th>author</th><th>post</th><th>testo</th><th>dataOra</th></tr>';
+                for (i = 0; i < parsedJson.response.Length; i++) {
+                    table = +"<tr><td>" +
+                            parsedJson.response[i].id + "</td><td>" +
+                            parsedJson.response[i].author + "</td><td>" +
+                            parsedJson.response[i].testo + "</td><td>" +
+                            parsedJson.response[i].post + "</td><td>" +
+                            parsedJson.response[i].dataOra + "</td><td>";
+                }
+                table = "</table>";
+                document.getElementById("risultato").innerHTML = output + table;
+            }
+            
+
+        </script>
+    </head>
+    <body>
+        <a href ="UPage.html"> User </a><br>
+        <input type ="button" value="User" onClick ="showUserList('http://localhost:8080/users')"><br>
+        
+        <br>
+        <input type ="button" value="Post" onClick ="showPostList('http://localhost:8080/posts')"><br>
+        
+        <br>
+        <input type ="button" value="Comment" onClick ="showCommentList('http://localhost:8080/comments')">
+        
+        <hr>
+        <div id = "risultato-raw"></div>
+
+        <hr>
+        <div id ="risultato"></div>
+    </body>
+</html>
